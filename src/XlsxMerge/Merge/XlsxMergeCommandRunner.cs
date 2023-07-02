@@ -259,10 +259,19 @@ namespace NexonKorea.XlsxMerge
 		    {
 			    var wss = GetWorkbook(cmdItem.destOrigin.Value).Sheets;
 			    var ws = wss[cmdItem.param1] as Excel.Worksheet;
-			    Excel.Range oRngToDeleteBase = ws.get_Range($"{cmdItem.intParam1}:{cmdItem.intParam1 + cmdItem.intParam2 - 1}");
+
+				Excel.Range oRngToDeleteBase = ws.get_Range($"{cmdItem.intParam1}:{cmdItem.intParam1 + cmdItem.intParam2 - 1}");
 			    Excel.Range oRngToDelete = oRngToDeleteBase.EntireRow;
-			    oRngToDelete.Delete();
-			    ReleaseComs(new object[] { oRngToDelete, oRngToDeleteBase, ws, wss });
+
+				int restoreTarget = cmdItem.intParam1 + cmdItem.intParam2;
+				var restoreRow = ws.get_Range($"{restoreTarget}:{restoreTarget}");
+				var formula = restoreRow.FormulaR1C1;
+
+				oRngToDelete.Delete();
+
+				restoreRow.FormulaR1C1 = formula;
+
+				ReleaseComs(new object[] { oRngToDelete, oRngToDeleteBase, ws, wss });
 		    }
 		}
 
