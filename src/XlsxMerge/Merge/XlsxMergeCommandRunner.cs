@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -260,11 +260,15 @@ namespace NexonKorea.XlsxMerge
 			    var wss = GetWorkbook(cmdItem.destOrigin.Value).Sheets;
 			    var ws = wss[cmdItem.param1] as Excel.Worksheet;
 
-				Excel.Range oRngToDeleteBase = ws.get_Range($"{cmdItem.intParam1}:{cmdItem.intParam1 + cmdItem.intParam2 - 1}");
+			    int interval = cmdItem.intParam2 - 1;
+				Excel.Range oRngToDeleteBase = ws.get_Range($"{cmdItem.intParam1}:{cmdItem.intParam1 + interval}");
 			    Excel.Range oRngToDelete = oRngToDeleteBase.EntireRow;
 
+			    var rowCol = HelperFunctions.GetLastRowColumnNumber(ws);
+			    var lastCellName = HelperFunctions.GetExcelColumnName(rowCol.Value) + rowCol.Key;
+
 				int restoreTarget = cmdItem.intParam1 + cmdItem.intParam2;
-				var restoreRow = ws.get_Range($"{restoreTarget}:{restoreTarget}");
+				var restoreRow = ws.get_Range($"A{restoreTarget}:{lastCellName}");
 				var formula = restoreRow.FormulaR1C1;
 
 				oRngToDelete.Delete();
